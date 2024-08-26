@@ -14,6 +14,7 @@ Below is a brief description of the purpose of each script:
 - _metric.py_ - Generate the components of the metric.
 - _fourier.py_ - Generate the Fourier coefficients.
 
-Note that some scripts use data files produced by other scripts. The dependencies are explained in _dep.png_
+Note that some scripts use data files produced by other scripts. The dependencies are explained in _dep.txt
+_
 
 
