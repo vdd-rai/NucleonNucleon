@@ -78,20 +78,19 @@ def d1U_p_mass(coord,r_index,Q1,Q2,hD):
     # matrices
     I = np.array([[1.,0j],[0j,1.]])
     sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
-    
+
     # parameters
     y = np.array([ y1[coord[0]]+hD,y2[coord[1]],y3[coord[2]] ])
-    x = np.array([0.,0.,r_vals[r_index]])
-    
-    pos_p = y+x/2.
-    pos_m = y-x/2.
-    
-    ar_p = np.linalg.norm(y+x/2.)
-    ar_m = np.linalg.norm(y-x/2.)
-    
+    xm = np.array([0,0,r_vals[r_index]/2.])
+    pos_p = y+xm
+    pos_m = y-xm
+
+    ar_p = np.linalg.norm(y+xm)
+    ar_m = np.linalg.norm(y-xm)
+
     f_p = fm_plus_p_y1[r_index][coord[0]][coord[1]][coord[2]]
     f_m = fm_minus_p_y1[r_index][coord[0]][coord[1]][coord[2]]
-    
+
     # U(1)
     dirs1 = [np.dot(np.dot(Q1,s),np.linalg.inv(Q1)) for s in sigma]
 
@@ -100,11 +99,11 @@ def d1U_p_mass(coord,r_index,Q1,Q2,hD):
     dirs1_param = [ 0.5*np.trace(Z1), 0.5*np.trace(sigma[0].dot(Z1)), 0.5*np.trace(sigma[1].dot(Z1)), 0.5*np.trace(sigma[2].dot(Z1)) ]
 
     phi1 = np.array( [np.cos(f_m)+dirs1_param[0], np.sin(f_m)*(1./ar_m)*dirs1_param[1], np.sin(f_m)*(1./ar_m)*dirs1_param[2], np.sin(f_m)*(1./ar_m)*dirs1_param[3]] )
-
+    
     # U(2)
     dirs2 = [np.dot(np.dot(Q2,s),np.linalg.inv(Q2)) for s in sigma]
 
-    Z2 = pos_p[0]*dirs2[0] + pos_p[1]*dirs2[1] + pos_p[2]+dirs2[2]
+    Z2 = pos_p[0]*dirs2[0] + pos_p[1]*dirs2[1] + pos_p[2]*dirs2[2]
 
     dirs2_param = [ 0.5*np.trace(Z2), 0.5*np.trace(sigma[0].dot(Z2)), 0.5*np.trace(sigma[1].dot(Z2)), 0.5*np.trace(sigma[2].dot(Z2)) ]
 
@@ -133,20 +132,19 @@ def d1U_m_mass(coord,r_index,Q1,Q2,hD):
     # matrices
     I = np.array([[1.,0j],[0j,1.]])
     sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
-    
+
     # parameters
     y = np.array([ y1[coord[0]]-hD,y2[coord[1]],y3[coord[2]] ])
-    x = np.array([0.,0.,r_vals[r_index]])
-    
-    pos_p = y+x/2.
-    pos_m = y-x/2.
-    
-    ar_p = np.linalg.norm(y+x/2.)
-    ar_m = np.linalg.norm(y-x/2.)
-    
+    xm = np.array([0,0,r_vals[r_index]/2.])
+    pos_p = y+xm
+    pos_m = y-xm
+
+    ar_p = np.linalg.norm(y+xm)
+    ar_m = np.linalg.norm(y-xm)
+
     f_p = fm_plus_m_y1[r_index][coord[0]][coord[1]][coord[2]]
     f_m = fm_minus_m_y1[r_index][coord[0]][coord[1]][coord[2]]
-    
+
     # U(1)
     dirs1 = [np.dot(np.dot(Q1,s),np.linalg.inv(Q1)) for s in sigma]
 
@@ -155,11 +153,11 @@ def d1U_m_mass(coord,r_index,Q1,Q2,hD):
     dirs1_param = [ 0.5*np.trace(Z1), 0.5*np.trace(sigma[0].dot(Z1)), 0.5*np.trace(sigma[1].dot(Z1)), 0.5*np.trace(sigma[2].dot(Z1)) ]
 
     phi1 = np.array( [np.cos(f_m)+dirs1_param[0], np.sin(f_m)*(1./ar_m)*dirs1_param[1], np.sin(f_m)*(1./ar_m)*dirs1_param[2], np.sin(f_m)*(1./ar_m)*dirs1_param[3]] )
-
+    
     # U(2)
     dirs2 = [np.dot(np.dot(Q2,s),np.linalg.inv(Q2)) for s in sigma]
 
-    Z2 = pos_p[0]*dirs2[0] + pos_p[1]*dirs2[1] + pos_p[2]+dirs2[2]
+    Z2 = pos_p[0]*dirs2[0] + pos_p[1]*dirs2[1] + pos_p[2]*dirs2[2]
 
     dirs2_param = [ 0.5*np.trace(Z2), 0.5*np.trace(sigma[0].dot(Z2)), 0.5*np.trace(sigma[1].dot(Z2)), 0.5*np.trace(sigma[2].dot(Z2)) ]
 
@@ -196,20 +194,19 @@ def d2U_p_mass(coord,r_index,Q1,Q2,hD):
     # matrices
     I = np.array([[1.,0j],[0j,1.]])
     sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
-    
+
     # parameters
     y = np.array([ y1[coord[0]],y2[coord[1]]+hD,y3[coord[2]] ])
-    x = np.array([0.,0.,r_vals[r_index]])
-    
-    pos_p = y+x/2.
-    pos_m = y-x/2.
-    
-    ar_p = np.linalg.norm(y+x/2.)
-    ar_m = np.linalg.norm(y-x/2.)
-    
+    xm = np.array([0,0,r_vals[r_index]/2.])
+    pos_p = y+xm
+    pos_m = y-xm
+
+    ar_p = np.linalg.norm(y+xm)
+    ar_m = np.linalg.norm(y-xm)
+
     f_p = fm_plus_p_y2[r_index][coord[0]][coord[1]][coord[2]]
     f_m = fm_minus_p_y2[r_index][coord[0]][coord[1]][coord[2]]
-    
+
     # U(1)
     dirs1 = [np.dot(np.dot(Q1,s),np.linalg.inv(Q1)) for s in sigma]
 
@@ -218,11 +215,11 @@ def d2U_p_mass(coord,r_index,Q1,Q2,hD):
     dirs1_param = [ 0.5*np.trace(Z1), 0.5*np.trace(sigma[0].dot(Z1)), 0.5*np.trace(sigma[1].dot(Z1)), 0.5*np.trace(sigma[2].dot(Z1)) ]
 
     phi1 = np.array( [np.cos(f_m)+dirs1_param[0], np.sin(f_m)*(1./ar_m)*dirs1_param[1], np.sin(f_m)*(1./ar_m)*dirs1_param[2], np.sin(f_m)*(1./ar_m)*dirs1_param[3]] )
-
+    
     # U(2)
     dirs2 = [np.dot(np.dot(Q2,s),np.linalg.inv(Q2)) for s in sigma]
 
-    Z2 = pos_p[0]*dirs2[0] + pos_p[1]*dirs2[1] + pos_p[2]+dirs2[2]
+    Z2 = pos_p[0]*dirs2[0] + pos_p[1]*dirs2[1] + pos_p[2]*dirs2[2]
 
     dirs2_param = [ 0.5*np.trace(Z2), 0.5*np.trace(sigma[0].dot(Z2)), 0.5*np.trace(sigma[1].dot(Z2)), 0.5*np.trace(sigma[2].dot(Z2)) ]
 
@@ -251,20 +248,19 @@ def d2U_m_mass(coord,r_index,Q1,Q2,hD):
     # matrices
     I = np.array([[1.,0j],[0j,1.]])
     sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
-    
+
     # parameters
     y = np.array([ y1[coord[0]],y2[coord[1]]-hD,y3[coord[2]] ])
-    x = np.array([0.,0.,r_vals[r_index]])
-    
-    pos_p = y+x/2.
-    pos_m = y-x/2.
-    
-    ar_p = np.linalg.norm(y+x/2.)
-    ar_m = np.linalg.norm(y-x/2.)
-    
+    xm = np.array([0,0,r_vals[r_index]/2.])
+    pos_p = y+xm
+    pos_m = y-xm
+
+    ar_p = np.linalg.norm(y+xm)
+    ar_m = np.linalg.norm(y-xm)
+
     f_p = fm_plus_m_y2[r_index][coord[0]][coord[1]][coord[2]]
     f_m = fm_minus_m_y2[r_index][coord[0]][coord[1]][coord[2]]
-    
+
     # U(1)
     dirs1 = [np.dot(np.dot(Q1,s),np.linalg.inv(Q1)) for s in sigma]
 
@@ -273,11 +269,11 @@ def d2U_m_mass(coord,r_index,Q1,Q2,hD):
     dirs1_param = [ 0.5*np.trace(Z1), 0.5*np.trace(sigma[0].dot(Z1)), 0.5*np.trace(sigma[1].dot(Z1)), 0.5*np.trace(sigma[2].dot(Z1)) ]
 
     phi1 = np.array( [np.cos(f_m)+dirs1_param[0], np.sin(f_m)*(1./ar_m)*dirs1_param[1], np.sin(f_m)*(1./ar_m)*dirs1_param[2], np.sin(f_m)*(1./ar_m)*dirs1_param[3]] )
-
+    
     # U(2)
     dirs2 = [np.dot(np.dot(Q2,s),np.linalg.inv(Q2)) for s in sigma]
 
-    Z2 = pos_p[0]*dirs2[0] + pos_p[1]*dirs2[1] + pos_p[2]+dirs2[2]
+    Z2 = pos_p[0]*dirs2[0] + pos_p[1]*dirs2[1] + pos_p[2]*dirs2[2]
 
     dirs2_param = [ 0.5*np.trace(Z2), 0.5*np.trace(sigma[0].dot(Z2)), 0.5*np.trace(sigma[1].dot(Z2)), 0.5*np.trace(sigma[2].dot(Z2)) ]
 
@@ -314,20 +310,19 @@ def d3U_p_mass(coord,r_index,Q1,Q2,hD):
     # matrices
     I = np.array([[1.,0j],[0j,1.]])
     sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
-    
+
     # parameters
     y = np.array([ y1[coord[0]],y2[coord[1]],y3[coord[2]]+hD ])
-    x = np.array([0.,0.,r_vals[r_index]])
-    
-    pos_p = y+x/2.
-    pos_m = y-x/2.
-    
-    ar_p = np.linalg.norm(y+x/2.)
-    ar_m = np.linalg.norm(y-x/2.)
-    
+    xm = np.array([0,0,r_vals[r_index]/2.])
+    pos_p = y+xm
+    pos_m = y-xm
+
+    ar_p = np.linalg.norm(y+xm)
+    ar_m = np.linalg.norm(y-xm)
+
     f_p = fm_plus_p_y3[r_index][coord[0]][coord[1]][coord[2]]
     f_m = fm_minus_p_y3[r_index][coord[0]][coord[1]][coord[2]]
-    
+
     # U(1)
     dirs1 = [np.dot(np.dot(Q1,s),np.linalg.inv(Q1)) for s in sigma]
 
@@ -336,11 +331,11 @@ def d3U_p_mass(coord,r_index,Q1,Q2,hD):
     dirs1_param = [ 0.5*np.trace(Z1), 0.5*np.trace(sigma[0].dot(Z1)), 0.5*np.trace(sigma[1].dot(Z1)), 0.5*np.trace(sigma[2].dot(Z1)) ]
 
     phi1 = np.array( [np.cos(f_m)+dirs1_param[0], np.sin(f_m)*(1./ar_m)*dirs1_param[1], np.sin(f_m)*(1./ar_m)*dirs1_param[2], np.sin(f_m)*(1./ar_m)*dirs1_param[3]] )
-
+    
     # U(2)
     dirs2 = [np.dot(np.dot(Q2,s),np.linalg.inv(Q2)) for s in sigma]
 
-    Z2 = pos_p[0]*dirs2[0] + pos_p[1]*dirs2[1] + pos_p[2]+dirs2[2]
+    Z2 = pos_p[0]*dirs2[0] + pos_p[1]*dirs2[1] + pos_p[2]*dirs2[2]
 
     dirs2_param = [ 0.5*np.trace(Z2), 0.5*np.trace(sigma[0].dot(Z2)), 0.5*np.trace(sigma[1].dot(Z2)), 0.5*np.trace(sigma[2].dot(Z2)) ]
 
@@ -369,20 +364,19 @@ def d3U_m_mass(coord,r_index,Q1,Q2,hD):
     # matrices
     I = np.array([[1.,0j],[0j,1.]])
     sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
-    
+
     # parameters
     y = np.array([ y1[coord[0]],y2[coord[1]],y3[coord[2]]-hD ])
-    x = np.array([0.,0.,r_vals[r_index]])
-    
-    pos_p = y+x/2.
-    pos_m = y-x/2.
-    
-    ar_p = np.linalg.norm(y+x/2.)
-    ar_m = np.linalg.norm(y-x/2.)
-    
+    xm = np.array([0,0,r_vals[r_index]/2.])
+    pos_p = y+xm
+    pos_m = y-xm
+
+    ar_p = np.linalg.norm(y+xm)
+    ar_m = np.linalg.norm(y-xm)
+
     f_p = fm_plus_m_y3[r_index][coord[0]][coord[1]][coord[2]]
     f_m = fm_minus_m_y3[r_index][coord[0]][coord[1]][coord[2]]
-    
+
     # U(1)
     dirs1 = [np.dot(np.dot(Q1,s),np.linalg.inv(Q1)) for s in sigma]
 
@@ -391,11 +385,11 @@ def d3U_m_mass(coord,r_index,Q1,Q2,hD):
     dirs1_param = [ 0.5*np.trace(Z1), 0.5*np.trace(sigma[0].dot(Z1)), 0.5*np.trace(sigma[1].dot(Z1)), 0.5*np.trace(sigma[2].dot(Z1)) ]
 
     phi1 = np.array( [np.cos(f_m)+dirs1_param[0], np.sin(f_m)*(1./ar_m)*dirs1_param[1], np.sin(f_m)*(1./ar_m)*dirs1_param[2], np.sin(f_m)*(1./ar_m)*dirs1_param[3]] )
-
+    
     # U(2)
     dirs2 = [np.dot(np.dot(Q2,s),np.linalg.inv(Q2)) for s in sigma]
 
-    Z2 = pos_p[0]*dirs2[0] + pos_p[1]*dirs2[1] + pos_p[2]+dirs2[2]
+    Z2 = pos_p[0]*dirs2[0] + pos_p[1]*dirs2[1] + pos_p[2]*dirs2[2]
 
     dirs2_param = [ 0.5*np.trace(Z2), 0.5*np.trace(sigma[0].dot(Z2)), 0.5*np.trace(sigma[1].dot(Z2)), 0.5*np.trace(sigma[2].dot(Z2)) ]
 
@@ -422,7 +416,34 @@ def d3_U_mass(r_index,Q1,Q2,hD):
         d3U_vals[idx[0]][idx[1]][idx[2]] = (1./(2*hD))*( d3U_p_mass(idx,r_index,Q1,Q2,hD) - d3U_m_mass(idx,r_index,Q1,Q2,hD) )
     return d3U_vals
 
-#%%
+#%%% output single
+
+import matplotlib.pyplot as plt
+
+I = np.array([[1.,0j],[0j,1.]])
+
+y1 = np.arange(-5., 5., 0.2)
+y2 = np.arange(-5., 5., 0.2)
+y3 = np.arange(-5., 5., 0.2)
+
+idx_list = []
+for i in range(len(y1)):
+    for j in range(len(y2)):
+        for k in range(len(y3)):
+            idx_list.append([i,j,k])
+
+r_vals = np.load('/home/velni/Escritorio/TFM/py/sample/r.npy')
+Q_vals = np.load('/home/velni/Escritorio/TFM/py/sample/Q.npy')
+
+r_index = 12
+Q_index = 4
+
+U = d1_U_mass(r_index,I,Q_vals[Q_index],hD)
+
+plt.imshow(U[:,25,:,0],cmap='gray')
+plt.show()
+
+#%% output
 
 import time
 
@@ -440,3 +461,14 @@ for r_index in range(len(r_vals)):
 print()
 print()
 print("--- runtime : %s seconds ---" % (time.time() - start_time))
+
+#%%% check
+
+import matplotlib.pyplot as plt
+
+U = np.load('/home/velni/Escritorio/TFM/py/deriv/data/m/d1/d1_U_mass_r=23_Q=0.npy')
+
+plt.imshow(U[:,25,:,0],cmap='gray')
+
+
+
