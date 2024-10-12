@@ -10,7 +10,7 @@ Below is a brief description of the purpose of each script:
 - _prod_read.py_ - Generate a field given by the product approximation.
 - _deriv_y.py_ - Generate the derivatives of the field w.r.t (y1,y2,y3).
 - _deriv_x.py_ - Generate the derivatives of the field w.r.t (x1,x2,x3).
-- _deriv_Q.py_ - Generate the derivatives of the field w.r.t (Q1,Q2).
+- _deriv_Q1.py_ / _deriv_Q2.py_ - Generate the derivatives of the field w.r.t Q1/Q2.
 - _metric.py_ - Generate the components of the metric.
 - _fourier.py_ - Generate the Fourier coefficients.
 
