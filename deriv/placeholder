@@ -1,23 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Aug 10 13:15:53 2024
-
-@author: velni
-"""
-
-import numpy as np
-from numba import njit
-
-### read f(r) values
-
-# plus / minus : x sign
-# p / m : hD sign
-
-f_plus_p_y1 = np.load('/home/velni/Escritorio/TFM/py/profile_f/interp/data/0/d1/plus/f0_plus_p_y1.npy')
-f_plus_m_y1 = np.load('/home/velni/Escritorio/TFM/py/profile_f/interp/data/0/d1/plus/f0_plus_m_y1.npy')
-f_minus_p_y1 = np.load('/home/velni/Escritorio/TFM/py/profile_f/interp/data/0/d1/minus/f0_minus_p_y1.npy') 
-f_minus_m_y1 = np.load('/home/velni/Escritorio/TFM/py/profile_f/interp/data/0/d1/minus/f0_minus_m_y1.npy') 
+ 
 
 f_plus_p_y2 = np.load('/home/velni/Escritorio/TFM/py/profile_f/interp/data/0/d2/plus/f0_plus_p_y2.npy')
 f_plus_m_y2 = np.load('/home/velni/Escritorio/TFM/py/profile_f/interp/data/0/d2/plus/f0_plus_m_y2.npy')
