@@ -2,7 +2,7 @@
 
 This repository contains the scripts used to perform the numerical calculations of the master's thesis ''Nucleon-nucleon potentials from generalized Skyrme models''.
 
-Below is a brief description of the purpose of each script:
+Below is a brief description of the procedure:
 
 ## Step 1: generate (r,Q)
 - Use _sample.py_. Generates _Q.npy_ and _r.npy_.
