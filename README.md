@@ -16,7 +16,7 @@ Below is a brief description of the purpose of each script:
 
 ## Step 4: compute the metric
 - Use _metric.nb_ to expand the terms of the metric. Copy each term into a separate Python function: _gX.py_.
-- Use _metric.py_ to compute the metric. Imports _gX.py_.
+- Use _metric.py_ to compute the metric (missing here). Imports _gX.py_.
 
 ## Step 5: compute the potential
 - Not chekced yet, but workflow similar to Step 4.
