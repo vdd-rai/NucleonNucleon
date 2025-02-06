@@ -7,7 +7,7 @@ Below is a brief description of the procedure:
 ## Step 1: generate (r,Q)
 - Use _sample.py_. Generates _Q.npy_,_r.npy_ and _uvw.npy_.
 
-### Step 2: compute volume forms
+## Step 2: compute volume forms
 - Use _volume_form.py_. Generates _dQ.npy_. Imports _uvw.npy_
 
 ## Step 3: obtain the radial function
