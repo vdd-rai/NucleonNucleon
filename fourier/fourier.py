@@ -30,12 +30,6 @@ dQ_vals = np.load('/home/velni/phd/w/tfm/py/sample/dQ.npy')
     
 ### SU(2) volume # 2*np.pi**2
 
-# import sympy as sp
-
-# x,t,f = sp.symbols("x t f")
-# arg = (sp.sin(x)**2)*sp.sin(t)
-# vol = sp.integrate(arg, (x, 0, np.pi), (t, 0, np.pi), (f, 0, 2*np.pi))
-
 vol = dQ_vals[0]*64
 
 ### Debug
