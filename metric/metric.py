@@ -75,7 +75,7 @@ for i in range(len(r_vals)):
 m = 0.526
 c6 = 1.
 
-#
+# g_15
 
 import time
 
@@ -83,7 +83,7 @@ start_time = time.time()
 
 g_15 = np.zeros(len(Q_vals))
 
-for r_index in range(40,50):
+for r_index in range(len(r)):
     for Q_index in range(len(Q_vals)):
         g_15[Q_index] = g_ij(1,5,c6,r_index,Q_index,0)
     np.save(f'/home/velni/phd/w/tfm/py/metric/data/0/g_15_r={r_index}', g_15) 
@@ -91,64 +91,3 @@ for r_index in range(40,50):
 print()
 print()
 print("--- runtime : %s seconds ---" % (time.time() - start_time)) # 400 seconds
-        
-"""
-g = np.zeros((len(r_vals),len(Q_vals),9,9))
-
-for r_index in range(len(r_vals)):
-    for Q_index in range(len(Q_vals)):
-        for A in range(9):
-            for B in range(9):
-                g[r_index][Q_index][A][B] = g_ij_6(A,B,c6,r_index,Q_index)
-        np.save(f'/home/velni/Escritorio/TFM/py/metric/data/0/g_r={r_index}_Q={Q_index}', g)
-        g = np.zeros((len(r_vals),len(Q_vals),9,9))
-
-Q_index = 0
-
-for r_index in range(len(r_vals)):
-    for A in range(9):
-        for B in range(9):
-            g[r_index][Q_index][A][B] = g_ij_6(A,B,c6,r_index,Q_index)
-    np.save(f'/home/velni/Escritorio/TFM/py/metric/data/0/g_r={r_index}_Q={Q_index}', g)
-    g = np.zeros((len(r_vals),len(Q_vals),9,9))
-"""
-
-#%%
-
-g_l = []
-
-for r_index in range(14):
-    g_temp = 0
-    for Q_index in range(len(Q_vals)):
-        k = np.load(f'/home/velni/Escritorio/TFM/py/metric/data/0/g_12_r={r_index}_Q={Q_index}.npy')
-        g_temp = g_temp + k
-    g_l.append(g_temp)
-    
-#%% merge
-
-for r_index in range(61):
-    G = []
-    g_p = list(np.load(f'/home/velni/Escritorio/TFM/py/metric/data/0/pre/g_14_r={r_index}.npy'))
-    g_m = list(np.load(f'/home/velni/Escritorio/TFM/py/metric/data/0/pre/-g_14_r={r_index}.npy'))
-    G = g_m + g_p
-    np.save(f'/home/velni/Escritorio/TFM/py/metric/data/0/g_14_r={r_index}', G) 
-
-#%%
-
-Q_slice = 23
-G = []
-
-for r_index in range(len(r_vals)):
-    g = np.load(f'/home/velni/Escritorio/TFM/py/metric/data/0/g_14_r={r_index}.npy')
-    G.append(g[Q_slice])
-
-plt.plot(np.arange(0,32,1),g,'k-')
-plt.show()
-
-
-
-
-
-
-
-
