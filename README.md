@@ -8,7 +8,7 @@ Below is a brief description of the procedure:
 - Use _sample.py_. Generates _Q.npy_,_r.npy_ and _uvw.npy_.
 
 ## Step 2: compute volume forms
-- Use _volume_form.py_. Generates _dQ.npy_. Imports _uvw.npy_
+- Use _volume_form_sympy.py_. Generates _dQ.npy_. Imports _uvw.npy_
 
 ## Step 3: obtain the radial function
 - Use _hedgehog_1S.nb_ to solve the differential equation for each model. Generates _data_sfX.txt_.
