@@ -87,6 +87,7 @@ for r_index in range(10,61):
     for Q_index in range(len(Q_vals)):
         g_48[Q_index] = g_ij(4,8,c6,r_index,Q_index,0)
     np.save(f'/home/velni/phd/w/tfm/py/metric/data/0/g_48_r={r_index}', g_48)
+    g_48 = np.zeros(len(Q_vals))
 
 print()
 print()
