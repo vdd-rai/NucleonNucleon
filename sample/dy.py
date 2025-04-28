@@ -31,24 +31,22 @@ dr = r_vals[1]-r_vals[0]
 #
 
 def dy1_gen(yt1):
-	dy1 = []
 	py1 = np.zeros(len(yt1))
 	for i in range(len(yt1)):
 		arg = (1./(1-yt1[i])**2)
 		py1[i] = arg
-		dy1.append(py1*dyt1)
+		dy1 = py1*dyt1
 
-	return np.array(dy1)
+	return dy1
 
 def dy2_gen(yt2):
-	dy2 = []
 	py2 = np.zeros(len(yt2))
 	for i in range(len(yt2)):
 		arg = (1./(1-yt2[i])**2)
 		py2[i] = arg
-		dy2.append(py2*dyt2)
+		dy2 = py2*dyt2
 
-	return np.array(dy2)
+	return dy2
 
 def dy3_gen(yt3,r):
 	dy3_pos = []
@@ -82,3 +80,7 @@ for r_idx,r in enumerate(r_vals):
 np.save('/home/velni/phd/w/tfm/py/sample/dy1', dy1)
 np.save('/home/velni/phd/w/tfm/py/sample/dy2', dy2)
 np.save('/home/velni/phd/w/tfm/py/sample/dy3', dy3)
+
+print(dy1.shape)
+print(dy2.shape)
+print(dy3.shape)
