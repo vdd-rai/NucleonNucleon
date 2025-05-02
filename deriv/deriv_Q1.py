@@ -10,13 +10,18 @@ import numpy as np
 from numba import njit
 import scipy as sci
 
+from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
+import warnings
+warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
+warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
+
 ### read f(r) values
 
 # plus / minus : x sign
 # p / m : hD sign
 
-f_plus = np.load('/home/velni/phd/w/tfm/py/profile_f/interp/data/no_deriv/f0_plus.npy')
-f_minus = np.load('/home/velni/phd/w/tfm/py/profile_f/interp/data/no_deriv/f0_minus.npy')
+f_plus = np.load('/home/velni/phd/w/tfm/py/profile_f/interp/data/noderiv/f0_plus.npy')
+f_minus = np.load('/home/velni/phd/w/tfm/py/profile_f/interp/data/noderiv/f0_minus.npy')
 
 I = np.array([[1.,0j],[0j,1.]])
 sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
@@ -28,14 +33,14 @@ Q_vals = np.load('/home/velni/phd/w/tfm/py/sample/Q.npy')
 
 ### y grid
 
-y1 = np.arange(-5., 5., 0.2)
-y2 = np.arange(-5., 5., 0.2)
-y3 = np.arange(-5., 5., 0.2)
+y1 = np.load('/home/velni/phd/w/tfm/py/sample/y1.npy')
+y2 = np.load('/home/velni/phd/w/tfm/py/sample/y2.npy')
+y3 = np.load('/home/velni/phd/w/tfm/py/sample/y3.npy')
 
 idx_list = []
 for i in range(len(y1)):
     for j in range(len(y2)):
-        for k in range(len(y3)):
+        for k in range(len(y3[0])):
             idx_list.append([i,j,k])
 
 ### product approximation for derivatives
@@ -46,13 +51,13 @@ for i in range(len(y1)):
 def D4U_p(coord,r_index,Q1p,Q2,hD):
     """ Compute product approximation in +hD displaced
     """
-    
+
     # matrices
     I = np.array([[1.,0j],[0j,1.]])
     sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
 
     # parameters
-    y = np.array([ y1[coord[0]],y2[coord[1]],y3[coord[2]] ])
+    y = np.array([ y1[coord[0]],y2[coord[1]],y3[r_index][coord[2]] ])
     xm = np.array([0,0,r_vals[r_index]])/2.
     pos_p = y+xm
     pos_m = y-xm
@@ -75,7 +80,7 @@ def D4U_p(coord,r_index,Q1p,Q2,hD):
     dirs1_param = [ 0.5*np.trace(Z1), 0.5*np.trace(sigma[0].dot(Z1)), 0.5*np.trace(sigma[1].dot(Z1)), 0.5*np.trace(sigma[2].dot(Z1)) ]
 
     phi1 = np.array( [np.cos(f_m)+dirs1_param[0], np.sin(f_m)*(1./ar_m)*dirs1_param[1], np.sin(f_m)*(1./ar_m)*dirs1_param[2], np.sin(f_m)*(1./ar_m)*dirs1_param[3]] )
-    
+
     # U(2)
     dirs2 = [np.dot(np.dot(Q2,s),np.linalg.inv(Q2)) for s in sigma]
 
@@ -84,7 +89,7 @@ def D4U_p(coord,r_index,Q1p,Q2,hD):
     dirs2_param = [ 0.5*np.trace(Z2), 0.5*np.trace(sigma[0].dot(Z2)), 0.5*np.trace(sigma[1].dot(Z2)), 0.5*np.trace(sigma[2].dot(Z2)) ]
 
     phi2 = np.array( [np.cos(f_p)+dirs2_param[0], np.sin(f_p)*(1./ar_p)*dirs2_param[1], np.sin(f_p)*(1./ar_p)*dirs2_param[2], np.sin(f_p)*(1./ar_p)*dirs2_param[3]] )
-    
+
     # U_S
     U_S = np.array([phi1[0]*phi2[0] - phi1[1]*phi2[1] - phi1[2]*phi2[2] - phi1[3]*phi2[3],
             phi1[0]*phi2[1] + phi1[1]*phi2[0],
@@ -94,9 +99,9 @@ def D4U_p(coord,r_index,Q1p,Q2,hD):
     # normalization
     C0 = (phi1[0]*phi2[0] - phi1[1]*phi2[1] - phi1[2]*phi2[2] - phi1[3]*phi2[3])**2
     Ck = (phi1[0]*phi2[1] + phi1[1]*phi2[0])**2 + (phi1[0]*phi2[2] + phi1[2]*phi2[0])**2 + (phi1[0]*phi2[3] + phi1[3]*phi2[0])**2
-    
+
     N = np.sqrt(C0 + Ck)
-    
+
     # output
     return (1./N)*U_S
 
@@ -104,13 +109,13 @@ def D4U_p(coord,r_index,Q1p,Q2,hD):
 def D4U_m(coord,r_index,Q1p,Q2,hD):
     """ Compute product approximation in -hD displaced
     """
-    
+
     # matrices
     I = np.array([[1.,0j],[0j,1.]])
     sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
 
     # parameters
-    y = np.array([ y1[coord[0]],y2[coord[1]],y3[coord[2]] ])
+    y = np.array([ y1[coord[0]],y2[coord[1]],y3[r_index][coord[2]] ])
     xm = np.array([0,0,r_vals[r_index]])/2.
     pos_p = y+xm
     pos_m = y-xm
@@ -120,7 +125,7 @@ def D4U_m(coord,r_index,Q1p,Q2,hD):
 
     f_p = f_plus[r_index][coord[0]][coord[1]][coord[2]]
     f_m = f_minus[r_index][coord[0]][coord[1]][coord[2]]
-    
+
     arg = 0.5*hD
     temp = np.cos(arg)*I + 1j*np.sin(arg)*sigma[0]
     Q1 = np.dot(Q1p, temp)
@@ -133,7 +138,7 @@ def D4U_m(coord,r_index,Q1p,Q2,hD):
     dirs1_param = [ 0.5*np.trace(Z1), 0.5*np.trace(sigma[0].dot(Z1)), 0.5*np.trace(sigma[1].dot(Z1)), 0.5*np.trace(sigma[2].dot(Z1)) ]
 
     phi1 = np.array( [np.cos(f_m)+dirs1_param[0], np.sin(f_m)*(1./ar_m)*dirs1_param[1], np.sin(f_m)*(1./ar_m)*dirs1_param[2], np.sin(f_m)*(1./ar_m)*dirs1_param[3]] )
-    
+
     # U(2)
     dirs2 = [np.dot(np.dot(Q2,s),np.linalg.inv(Q2)) for s in sigma]
 
@@ -142,7 +147,7 @@ def D4U_m(coord,r_index,Q1p,Q2,hD):
     dirs2_param = [ 0.5*np.trace(Z2), 0.5*np.trace(sigma[0].dot(Z2)), 0.5*np.trace(sigma[1].dot(Z2)), 0.5*np.trace(sigma[2].dot(Z2)) ]
 
     phi2 = np.array( [np.cos(f_p)+dirs2_param[0], np.sin(f_p)*(1./ar_p)*dirs2_param[1], np.sin(f_p)*(1./ar_p)*dirs2_param[2], np.sin(f_p)*(1./ar_p)*dirs2_param[3]] )
-    
+
     # U_S
     U_S = np.array([phi1[0]*phi2[0] - phi1[1]*phi2[1] - phi1[2]*phi2[2] - phi1[3]*phi2[3],
             phi1[0]*phi2[1] + phi1[1]*phi2[0],
@@ -152,16 +157,16 @@ def D4U_m(coord,r_index,Q1p,Q2,hD):
     # normalization
     C0 = (phi1[0]*phi2[0] - phi1[1]*phi2[1] - phi1[2]*phi2[2] - phi1[3]*phi2[3])**2
     Ck = (phi1[0]*phi2[1] + phi1[1]*phi2[0])**2 + (phi1[0]*phi2[2] + phi1[2]*phi2[0])**2 + (phi1[0]*phi2[3] + phi1[3]*phi2[0])**2
-    
+
     N = np.sqrt(C0 + Ck)
-    
+
     # output
     return (1./N)*U_S
 
 def D4_U(r_index,Q1p,Q2,hD):
-    D4U_vals = np.zeros((len(y1),len(y2),len(y3),4))
+    D4U_vals = np.zeros((len(y1),len(y2),len(y3[0]),4))
     for idx in idx_list:
-        D4U_vals[idx[0]][idx[1]][idx[2]] = (1./(2*hD))*( D4U_p(idx,r_index,Q1p,Q2,hD) - D4U_m(idx,r_index,Q1p,Q2,hD) )
+        D4U_vals[idx[0]][idx[1]][idx[2]] = (1./(2*hD))*( D4U_p(idx,r_index,Q1p,Q2,hD) - D4U_m(idx,r_index,Q1p,Q2,hD) ).real
     return D4U_vals
 
 # D5
@@ -170,13 +175,13 @@ def D4_U(r_index,Q1p,Q2,hD):
 def D5U_p(coord,r_index,Q1p,Q2,hD):
     """ Compute product approximation in +hD displaced
     """
-    
+
     # matrices
     I = np.array([[1.,0j],[0j,1.]])
     sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
 
     # parameters
-    y = np.array([ y1[coord[0]],y2[coord[1]],y3[coord[2]] ])
+    y = np.array([ y1[coord[0]],y2[coord[1]],y3[r_index][coord[2]] ])
     xm = np.array([0,0,r_vals[r_index]])/2.
     pos_p = y+xm
     pos_m = y-xm
@@ -186,7 +191,7 @@ def D5U_p(coord,r_index,Q1p,Q2,hD):
 
     f_p = f_plus[r_index][coord[0]][coord[1]][coord[2]]
     f_m = f_minus[r_index][coord[0]][coord[1]][coord[2]]
-    
+
     arg = -0.5*hD
     temp = np.cos(arg)*I + 1j*np.sin(arg)*sigma[1]
     Q1 = np.dot(Q1p, temp)
@@ -199,7 +204,7 @@ def D5U_p(coord,r_index,Q1p,Q2,hD):
     dirs1_param = [ 0.5*np.trace(Z1), 0.5*np.trace(sigma[0].dot(Z1)), 0.5*np.trace(sigma[1].dot(Z1)), 0.5*np.trace(sigma[2].dot(Z1)) ]
 
     phi1 = np.array( [np.cos(f_m)+dirs1_param[0], np.sin(f_m)*(1./ar_m)*dirs1_param[1], np.sin(f_m)*(1./ar_m)*dirs1_param[2], np.sin(f_m)*(1./ar_m)*dirs1_param[3]] )
-    
+
     # U(2)
     dirs2 = [np.dot(np.dot(Q2,s),np.linalg.inv(Q2)) for s in sigma]
 
@@ -208,7 +213,7 @@ def D5U_p(coord,r_index,Q1p,Q2,hD):
     dirs2_param = [ 0.5*np.trace(Z2), 0.5*np.trace(sigma[0].dot(Z2)), 0.5*np.trace(sigma[1].dot(Z2)), 0.5*np.trace(sigma[2].dot(Z2)) ]
 
     phi2 = np.array( [np.cos(f_p)+dirs2_param[0], np.sin(f_p)*(1./ar_p)*dirs2_param[1], np.sin(f_p)*(1./ar_p)*dirs2_param[2], np.sin(f_p)*(1./ar_p)*dirs2_param[3]] )
-    
+
     # U_S
     U_S = np.array([phi1[0]*phi2[0] - phi1[1]*phi2[1] - phi1[2]*phi2[2] - phi1[3]*phi2[3],
             phi1[0]*phi2[1] + phi1[1]*phi2[0],
@@ -218,9 +223,9 @@ def D5U_p(coord,r_index,Q1p,Q2,hD):
     # normalization
     C0 = (phi1[0]*phi2[0] - phi1[1]*phi2[1] - phi1[2]*phi2[2] - phi1[3]*phi2[3])**2
     Ck = (phi1[0]*phi2[1] + phi1[1]*phi2[0])**2 + (phi1[0]*phi2[2] + phi1[2]*phi2[0])**2 + (phi1[0]*phi2[3] + phi1[3]*phi2[0])**2
-    
+
     N = np.sqrt(C0 + Ck)
-    
+
     # output
     return (1./N)*U_S
 
@@ -228,13 +233,13 @@ def D5U_p(coord,r_index,Q1p,Q2,hD):
 def D5U_m(coord,r_index,Q1p,Q2,hD):
     """ Compute product approximation in -hD displaced
     """
-    
+
     # matrices
     I = np.array([[1.,0j],[0j,1.]])
     sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
 
     # parameters
-    y = np.array([ y1[coord[0]],y2[coord[1]],y3[coord[2]] ])
+    y = np.array([ y1[coord[0]],y2[coord[1]],y3[r_index][coord[2]] ])
     xm = np.array([0,0,r_vals[r_index]])/2.
     pos_p = y+xm
     pos_m = y-xm
@@ -244,7 +249,7 @@ def D5U_m(coord,r_index,Q1p,Q2,hD):
 
     f_p = f_plus[r_index][coord[0]][coord[1]][coord[2]]
     f_m = f_minus[r_index][coord[0]][coord[1]][coord[2]]
-    
+
     arg = 0.5*hD
     temp = np.cos(arg)*I + 1j*np.sin(arg)*sigma[1]
     Q1 = np.dot(Q1p, temp)
@@ -257,7 +262,7 @@ def D5U_m(coord,r_index,Q1p,Q2,hD):
     dirs1_param = [ 0.5*np.trace(Z1), 0.5*np.trace(sigma[0].dot(Z1)), 0.5*np.trace(sigma[1].dot(Z1)), 0.5*np.trace(sigma[2].dot(Z1)) ]
 
     phi1 = np.array( [np.cos(f_m)+dirs1_param[0], np.sin(f_m)*(1./ar_m)*dirs1_param[1], np.sin(f_m)*(1./ar_m)*dirs1_param[2], np.sin(f_m)*(1./ar_m)*dirs1_param[3]] )
-    
+
     # U(2)
     dirs2 = [np.dot(np.dot(Q2,s),np.linalg.inv(Q2)) for s in sigma]
 
@@ -266,7 +271,7 @@ def D5U_m(coord,r_index,Q1p,Q2,hD):
     dirs2_param = [ 0.5*np.trace(Z2), 0.5*np.trace(sigma[0].dot(Z2)), 0.5*np.trace(sigma[1].dot(Z2)), 0.5*np.trace(sigma[2].dot(Z2)) ]
 
     phi2 = np.array( [np.cos(f_p)+dirs2_param[0], np.sin(f_p)*(1./ar_p)*dirs2_param[1], np.sin(f_p)*(1./ar_p)*dirs2_param[2], np.sin(f_p)*(1./ar_p)*dirs2_param[3]] )
-    
+
     # U_S
     U_S = np.array([phi1[0]*phi2[0] - phi1[1]*phi2[1] - phi1[2]*phi2[2] - phi1[3]*phi2[3],
             phi1[0]*phi2[1] + phi1[1]*phi2[0],
@@ -276,16 +281,16 @@ def D5U_m(coord,r_index,Q1p,Q2,hD):
     # normalization
     C0 = (phi1[0]*phi2[0] - phi1[1]*phi2[1] - phi1[2]*phi2[2] - phi1[3]*phi2[3])**2
     Ck = (phi1[0]*phi2[1] + phi1[1]*phi2[0])**2 + (phi1[0]*phi2[2] + phi1[2]*phi2[0])**2 + (phi1[0]*phi2[3] + phi1[3]*phi2[0])**2
-    
+
     N = np.sqrt(C0 + Ck)
-    
+
     # output
     return (1./N)*U_S
 
 def D5_U(r_index,Q1p,Q2,hD):
-    D5U_vals = np.zeros((len(y1),len(y2),len(y3),4))
+    D5U_vals = np.zeros((len(y1),len(y2),len(y3[0]),4))
     for idx in idx_list:
-        D5U_vals[idx[0]][idx[1]][idx[2]] = (1./(2*hD))*( D5U_p(idx,r_index,Q1p,Q2,hD) - D5U_m(idx,r_index,Q1p,Q2,hD) )
+        D5U_vals[idx[0]][idx[1]][idx[2]] = (1./(2*hD))*( D5U_p(idx,r_index,Q1p,Q2,hD) - D5U_m(idx,r_index,Q1p,Q2,hD) ).real
     return D5U_vals
 
 # D6
@@ -294,13 +299,13 @@ def D5_U(r_index,Q1p,Q2,hD):
 def D6U_p(coord,r_index,Q1p,Q2,hD):
     """ Compute product approximation in +hD displaced
     """
-    
+
     # matrices
     I = np.array([[1.,0j],[0j,1.]])
     sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
 
     # parameters
-    y = np.array([ y1[coord[0]],y2[coord[1]],y3[coord[2]] ])
+    y = np.array([ y1[coord[0]],y2[coord[1]],y3[r_index][coord[2]] ])
     xm = np.array([0,0,r_vals[r_index]])/2.
     pos_p = y+xm
     pos_m = y-xm
@@ -310,7 +315,7 @@ def D6U_p(coord,r_index,Q1p,Q2,hD):
 
     f_p = f_plus[r_index][coord[0]][coord[1]][coord[2]]
     f_m = f_minus[r_index][coord[0]][coord[1]][coord[2]]
-    
+
     arg = -0.5*hD
     temp = np.cos(arg)*I + 1j*np.sin(arg)*sigma[2]
     Q1 = np.dot(Q1p, temp)
@@ -323,7 +328,7 @@ def D6U_p(coord,r_index,Q1p,Q2,hD):
     dirs1_param = [ 0.5*np.trace(Z1), 0.5*np.trace(sigma[0].dot(Z1)), 0.5*np.trace(sigma[1].dot(Z1)), 0.5*np.trace(sigma[2].dot(Z1)) ]
 
     phi1 = np.array( [np.cos(f_m)+dirs1_param[0], np.sin(f_m)*(1./ar_m)*dirs1_param[1], np.sin(f_m)*(1./ar_m)*dirs1_param[2], np.sin(f_m)*(1./ar_m)*dirs1_param[3]] )
-    
+
     # U(2)
     dirs2 = [np.dot(np.dot(Q2,s),np.linalg.inv(Q2)) for s in sigma]
 
@@ -332,7 +337,7 @@ def D6U_p(coord,r_index,Q1p,Q2,hD):
     dirs2_param = [ 0.5*np.trace(Z2), 0.5*np.trace(sigma[0].dot(Z2)), 0.5*np.trace(sigma[1].dot(Z2)), 0.5*np.trace(sigma[2].dot(Z2)) ]
 
     phi2 = np.array( [np.cos(f_p)+dirs2_param[0], np.sin(f_p)*(1./ar_p)*dirs2_param[1], np.sin(f_p)*(1./ar_p)*dirs2_param[2], np.sin(f_p)*(1./ar_p)*dirs2_param[3]] )
-    
+
     # U_S
     U_S = np.array([phi1[0]*phi2[0] - phi1[1]*phi2[1] - phi1[2]*phi2[2] - phi1[3]*phi2[3],
             phi1[0]*phi2[1] + phi1[1]*phi2[0],
@@ -342,9 +347,9 @@ def D6U_p(coord,r_index,Q1p,Q2,hD):
     # normalization
     C0 = (phi1[0]*phi2[0] - phi1[1]*phi2[1] - phi1[2]*phi2[2] - phi1[3]*phi2[3])**2
     Ck = (phi1[0]*phi2[1] + phi1[1]*phi2[0])**2 + (phi1[0]*phi2[2] + phi1[2]*phi2[0])**2 + (phi1[0]*phi2[3] + phi1[3]*phi2[0])**2
-    
+
     N = np.sqrt(C0 + Ck)
-    
+
     # output
     return (1./N)*U_S
 
@@ -352,13 +357,13 @@ def D6U_p(coord,r_index,Q1p,Q2,hD):
 def D6U_m(coord,r_index,Q1p,Q2,hD):
     """ Compute product approximation in -hD displaced
     """
-    
+
     # matrices
     I = np.array([[1.,0j],[0j,1.]])
     sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
 
     # parameters
-    y = np.array([ y1[coord[0]],y2[coord[1]],y3[coord[2]] ])
+    y = np.array([ y1[coord[0]],y2[coord[1]],y3[r_index][coord[2]] ])
     xm = np.array([0,0,r_vals[r_index]])/2.
     pos_p = y+xm
     pos_m = y-xm
@@ -368,7 +373,7 @@ def D6U_m(coord,r_index,Q1p,Q2,hD):
 
     f_p = f_plus[r_index][coord[0]][coord[1]][coord[2]]
     f_m = f_minus[r_index][coord[0]][coord[1]][coord[2]]
-    
+
     arg = 0.5*hD
     temp = np.cos(arg)*I + 1j*np.sin(arg)*sigma[2]
     Q1 = np.dot(Q1p, temp)
@@ -381,7 +386,7 @@ def D6U_m(coord,r_index,Q1p,Q2,hD):
     dirs1_param = [ 0.5*np.trace(Z1), 0.5*np.trace(sigma[0].dot(Z1)), 0.5*np.trace(sigma[1].dot(Z1)), 0.5*np.trace(sigma[2].dot(Z1)) ]
 
     phi1 = np.array( [np.cos(f_m)+dirs1_param[0], np.sin(f_m)*(1./ar_m)*dirs1_param[1], np.sin(f_m)*(1./ar_m)*dirs1_param[2], np.sin(f_m)*(1./ar_m)*dirs1_param[3]] )
-    
+
     # U(2)
     dirs2 = [np.dot(np.dot(Q2,s),np.linalg.inv(Q2)) for s in sigma]
 
@@ -390,7 +395,7 @@ def D6U_m(coord,r_index,Q1p,Q2,hD):
     dirs2_param = [ 0.5*np.trace(Z2), 0.5*np.trace(sigma[0].dot(Z2)), 0.5*np.trace(sigma[1].dot(Z2)), 0.5*np.trace(sigma[2].dot(Z2)) ]
 
     phi2 = np.array( [np.cos(f_p)+dirs2_param[0], np.sin(f_p)*(1./ar_p)*dirs2_param[1], np.sin(f_p)*(1./ar_p)*dirs2_param[2], np.sin(f_p)*(1./ar_p)*dirs2_param[3]] )
-    
+
     # U_S
     U_S = np.array([phi1[0]*phi2[0] - phi1[1]*phi2[1] - phi1[2]*phi2[2] - phi1[3]*phi2[3],
             phi1[0]*phi2[1] + phi1[1]*phi2[0],
@@ -400,40 +405,42 @@ def D6U_m(coord,r_index,Q1p,Q2,hD):
     # normalization
     C0 = (phi1[0]*phi2[0] - phi1[1]*phi2[1] - phi1[2]*phi2[2] - phi1[3]*phi2[3])**2
     Ck = (phi1[0]*phi2[1] + phi1[1]*phi2[0])**2 + (phi1[0]*phi2[2] + phi1[2]*phi2[0])**2 + (phi1[0]*phi2[3] + phi1[3]*phi2[0])**2
-    
+
     N = np.sqrt(C0 + Ck)
-    
+
     # output
     return (1./N)*U_S
 
 def D6_U(r_index,Q1p,Q2,hD):
-    D6U_vals = np.zeros((len(y1),len(y2),len(y3),4))
+    D6U_vals = np.zeros((len(y1),len(y2),len(y3[0]),4))
     for idx in idx_list:
-        D6U_vals[idx[0]][idx[1]][idx[2]] = (1./(2*hD))*( D6U_p(idx,r_index,Q1p,Q2,hD) - D6U_m(idx,r_index,Q1p,Q2,hD) )
+        D6U_vals[idx[0]][idx[1]][idx[2]] = (1./(2*hD))*( D6U_p(idx,r_index,Q1p,Q2,hD) - D6U_m(idx,r_index,Q1p,Q2,hD) ).real
     return D6U_vals
 
-#%%% output single
-
+### output single
+"""
 import matplotlib.pyplot as plt
-
-idx_list = []
-for i in range(len(y1)):
-    for j in range(len(y2)):
-        for k in range(len(y3)):
-            idx_list.append([i,j,k])
-
-r_vals = np.load('/home/velni/phd/w/tfm/py/sample/r.npy')
-Q_vals = np.load('/home/velni/phd/w/tfm/py/sample/Q.npy')
 
 r_index = 18
 Q_index = 22
 
 U = D5_U(r_index,I,Q_vals[Q_index],hD)
+"""
+# check discarding imaginary part
+"""
+U_old = np.load(f'/home/velni/phd/w/tfm/py/deriv/data/0/D5/D5_U_r={r_index}_Q={Q_index}.npy')
 
-plt.imshow(U[:,25,:,0],cmap='gray')
-plt.show()
-
-#%% output
+for Y1 in range(len(y1)):
+    for Y2 in range(len(y2)):
+        for Y3 in range(len(y3)):
+            for coord in range(4):
+                if U[Y1,Y2,Y3][coord] == U_old[Y1,Y2,Y3][coord]:
+                    pass
+                if abs(U[Y1,Y2,Y3][coord].imag) >= 10E-10:
+                    print(f'ERRO!: U={U[Y1,Y2,Y3][coord]} pero U_old={U_old[Y1,Y2,Y3][coord]}')
+                    break
+"""
+### output
 
 point_list = []
 for i in range(len(r_vals)):
@@ -448,20 +455,25 @@ hD4 = 0.01
 hD5 = 0.01
 hD6 = 0.01
 
-for point in point_list:
+for idx,point in enumerate(point_list):
+    t0 = time.time()    
+
     #np.save(f'/home/velni/phd/w/tfm/py/deriv/data/0/D4/D4_U_r={point[0]}_Q={point[1]}', D4_U(point[0],I,Q_vals[point[1]],hD4))
-    #np.save(f'/home/velni/phd/w/tfm/py/deriv/data/0/D5/D5_U_r={point[0]}_Q={point[1]}', D5_U(point[0],I,Q_vals[point[1]],hD5))
-    np.save(f'/home/velni/phd/w/tfm/py/deriv/data/0/D6/D6_U_r={point[0]}_Q={point[1]}', D6_U(point[0],I,Q_vals[point[1]],hD6))
+    np.save(f'/home/velni/phd/w/tfm/py/deriv/data/0/D5/D5_U_r={point[0]}_Q={point[1]}', D5_U(point[0],I,Q_vals[point[1]],hD5))
+    #np.save(f'/home/velni/phd/w/tfm/py/deriv/data/0/D6/D6_U_r={point[0]}_Q={point[1]}', D6_U(point[0],I,Q_vals[point[1]],hD6))
+
+    stept = time.time() - t0
+    print(f'done: {idx+1}/{len(point_list)} ----- eta: {stept*(len(point_list)-idx-1)/60.} min')
 
 print()
 print()
 print("--- runtime : %s seconds ---" % (time.time() - start_time))
 
-#%%% check
-
+### check
+"""
 import matplotlib.pyplot as plt
 
 U = np.load('/home/velni/phd/w/tfm/py/deriv/data/0/D5/D5_U_r=18_Q=22.npy')
 
 plt.imshow(U[:,25,:,0],cmap='gray')
-
+"""
