@@ -33,20 +33,20 @@ def y3_gen(yt3,r):
 
 r_vals = np.load('/home/velni/phd/w/tfm/py/sample/r.npy')
 
-np.save('/home/velni/phd/w/tfm/py/sample/y1',y1)
-np.save('/home/velni/phd/w/tfm/py/sample/y2',y2)
+#np.save('/home/velni/phd/w/tfm/py/sample/y1',y1)
+#np.save('/home/velni/phd/w/tfm/py/sample/y2',y2)
 
 y3 = np.zeros((len(r_vals),l3))
 for r_idx,r in enumerate(r_vals):
     y3_temp = y3_gen(yt3,r)
     y3[r_idx] = y3_temp
 
-np.save('/home/velni/phd/w/tfm/py/sample/y3',y3)
+#np.save('/home/velni/phd/w/tfm/py/sample/y3',y3)
 
 ### plot
-"""
+
 import matplotlib.pyplot as plt
 
 plt.plot(yt3,y3_gen(yt3,1.131),'r-')
 plt.show()
-"""
+
