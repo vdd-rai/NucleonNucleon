@@ -33,9 +33,9 @@ Q_vals = np.load('/home/velni/phd/w/tfm/py/sample/Q.npy')
 
 ### y grid
 
-y1 = np.load('/home/velni/phd/w/tfm/py/sample/y1.npy')
-y2 = np.load('/home/velni/phd/w/tfm/py/sample/y2.npy')
-y3 = np.load('/home/velni/phd/w/tfm/py/sample/y3.npy')
+y1 = np.load('/home/velni/phd/w/tfm/py/sample/reg_40x40x80/y1.npy')
+y2 = np.load('/home/velni/phd/w/tfm/py/sample/reg_40x40x80/y2.npy')
+y3 = np.load('/home/velni/phd/w/tfm/py/sample/reg_40x40x80/y3.npy')
 
 idx_list = []
 for i in range(len(y1)):
@@ -458,8 +458,8 @@ hD6 = 0.01
 for idx,point in enumerate(point_list):
     t0 = time.time()    
 
-    #np.save(f'/home/velni/phd/w/tfm/py/deriv/data/0/D4/D4_U_r={point[0]}_Q={point[1]}', D4_U(point[0],I,Q_vals[point[1]],hD4))
-    np.save(f'/home/velni/phd/w/tfm/py/deriv/data/0/D5/D5_U_r={point[0]}_Q={point[1]}', D5_U(point[0],I,Q_vals[point[1]],hD5))
+    np.save(f'/home/velni/phd/w/tfm/py/deriv/data/0/D4/D4_U_r={point[0]}_Q={point[1]}', D4_U(point[0],I,Q_vals[point[1]],hD4))
+    #np.save(f'/home/velni/phd/w/tfm/py/deriv/data/0/D5/D5_U_r={point[0]}_Q={point[1]}', D5_U(point[0],I,Q_vals[point[1]],hD5))
     #np.save(f'/home/velni/phd/w/tfm/py/deriv/data/0/D6/D6_U_r={point[0]}_Q={point[1]}', D6_U(point[0],I,Q_vals[point[1]],hD6))
 
     stept = time.time() - t0

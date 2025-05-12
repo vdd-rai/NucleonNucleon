@@ -46,9 +46,9 @@ Q_vals = np.load('/home/velni/phd/w/tfm/py/sample/Q.npy')
 
 ### y grid
 
-y1 = np.load('/home/velni/phd/w/tfm/py/sample/y1.npy')
-y2 = np.load('/home/velni/phd/w/tfm/py/sample/y2.npy')
-y3 = np.load('/home/velni/phd/w/tfm/py/sample/y3.npy')
+y1 = np.load('/home/velni/phd/w/tfm/py/sample/reg_40x40x80/y1.npy')
+y2 = np.load('/home/velni/phd/w/tfm/py/sample/reg_40x40x80/y2.npy')
+y3 = np.load('/home/velni/phd/w/tfm/py/sample/reg_40x40x80/y3.npy')
 
 idx_list = []
 for i in range(len(y1)):
