@@ -17,9 +17,9 @@ rc('text', usetex=True)
 
 ### y grid
 
-y1 = np.arange(-5., 5., 0.2)
-y2 = np.arange(-5., 5., 0.2)
-y3 = np.arange(-5., 5., 0.2)
+y1 = np.load('/home/velni/phd/w/tfm/py/sample/reg_50x50x100/y1.npy')
+y2 = np.load('/home/velni/phd/w/tfm/py/sample/reg_50x50x100/y2.npy')
+y3 = np.load('/home/velni/phd/w/tfm/py/sample/reg_50x50x100/y3.npy')
 
 idx_list = []
 for i in range(len(y1)):
@@ -74,7 +74,10 @@ def A_0(alpha,i,j,r_index,mod):
     # Integrate over Q
     g = np.load(f'/home/velni/phd/w/tfm/py/metric/data/{mod}/g_{i}{j + 3*alpha}_r={r_index}.npy')
 
-    A = sum(g)*dQ_vals[0]
+    for Q_index in range(len(Q_vals)):
+        arg = g[Q_index]*dQ_vals[0]
+        A = A + arg
+
     vol = dQ_vals[0]*32
 
     return A/vol
@@ -100,12 +103,13 @@ def B_0(alpha,beta,i,j,L,r_index,mod):
 
     # Initialize value
     B = 0
-    delta = np.array([[1.,0.],[0.,1.]])
+    delta2 = np.identity(2)
+    delta3 = np.identity(3)
 
     # Integrate over Q
     g = np.load(f'/home/velni/phd/w/tfm/py/metric/data/{mod}/g_{i+3*alpha}{j+3*beta}_r={r_index}.npy')
     for Q_index in range(len(Q_vals)):
-         B = B + g[Q_index] - L*delta[alpha-1][beta-1]*delta[i-1][j-1]
+         B = B + (g[Q_index] - L*delta2[alpha-1][beta-1]*delta3[i-1][j-1])*dQ_vals[0]
 
     vol = dQ_vals[0]*32
 
@@ -114,7 +118,7 @@ def B_0(alpha,beta,i,j,L,r_index,mod):
 def B_ab(alpha,beta,a,b,i,j,r_index,mod):
 
     # Integrate over Q
-    g = np.load(f'/home/velni/phd/w/tfm/py/metric/data/{mod}/g_{i+3*alpha}{j+3*alpha}_r={r_index}.npy')
+    g = np.load(f'/home/velni/phd/w/tfm/py/metric/data/{mod}/g_{i+3*alpha}{j+3*beta}_r={r_index}.npy')
     B = 0
     for Q_index in range(len(g)):
         arg = g[Q_index]*R[Q_index][a-1][b-1]*dQ_vals[0]
@@ -132,12 +136,12 @@ def C_0(i,j,M,r_index,mod):
 
     # Initialize value
     C = 0
-    delta = np.identity(3)
+    delta3 = np.identity(3)
 
     # Integrate over Q
     g = np.load(f'/home/velni/phd/w/tfm/py/metric/data/{mod}/g_{i}{j}_r={r_index}.npy')
     for Q_index in range(len(Q_vals)):
-         C = C + g[Q_index] - (M/2)*delta[i-1][j-1]
+         C = C + (g[Q_index] - (M/2)*delta3[i-1][j-1])*dQ_vals[Q_index]
 
     vol = dQ_vals[0]*32
 
@@ -156,7 +160,7 @@ def C_ab(a,b,i,j,r_index,mod):
     for step in range(len(R)):
         vol = vol + R[step][a-1][b-1]*R[step][a-1][b-1]*dQ_vals[0]
 
-    return C/(2*vol)
+    return C/(2*vol) # /2 was missing
 
 #
 
@@ -168,10 +172,13 @@ def D_0(r_index,mod):
     # Integrate over Q
     V = np.load(f'/home/velni/phd/w/tfm/py/pot/data/{mod}/V_r={r_index}.npy')
 
-    D = sum(V)
+    for Q_index in range(len(Q_vals)):
+        arg = V[Q_index]*dQ_vals[0]
+        D = D + arg
+
     vol = dQ_vals[0]*32
 
-    return D/(2*vol)
+    return D/vol
 
 def D_ab(a,b,r_index,mod):
 
@@ -186,113 +193,7 @@ def D_ab(a,b,r_index,mod):
     for step in range(len(R)):
         vol = vol + R[step][a-1][b-1]*R[step][a-1][b-1]*dQ_vals[0]
 
-    return D/(2*vol)
-
-"""
-def B_0(alpha,beta,i,j,L,r_index,mod):
-
-    # Initialize value
-    B = 0
-    delta = np.array([[1.,0.],[0.,1.]])
-
-    # Integrate over Q
-    g = np.load(f'/home/velni/Escritorio/TFM/py/metric/data/{mod}/g_{i + 3*alpha}{j + 3*beta}_r={r_index}.npy')
-    for Q_index in range(len(Q_vals)):
-        B_s = g[Q_index] - L*delta[alpha-1][beta-1]*delta[i-1][j-1]
-        B += B_s
-        B_s = 0
-
-    return B/vol
-
-def B_ab(alpha,beta,i,j,a,b,r_index,mod):
-
-    # Initialize values
-    B = 0
-    sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
-
-    # Integrate over Q
-    g = np.load(f'/home/velni/Escritorio/TFM/py/metric/data/{mod}/g_{i + 3*alpha}{j + 3*beta}_r={r_index}.npy')
-    for Q_index in range(len(Q_vals)):
-        R = np.zeros((3,3))
-        for ap in range(3):
-            for bp in range(3):
-                R[ap][bp] = 0.5*np.trace(np.dot(sigma[ap],np.dot(Q_vals[Q_index],np.dot(sigma[bp],np.linalg.inv(Q_vals[Q_index])))))
-        B_s = g[Q_index]*np.linalg.inv(R)[a-1][b-1]
-        B += B_s
-        B_s = 0
-
-    return B
-
-#
-
-def C_0(i,j,M,r_index,mod):
-
-    # Initialize value
-    C = 0
-    delta = np.array([[1.,0.,0.,0.,0.],[0.,1.,0.,0.,0.],[0.,0.,1.,0.,0.,],[0.,0.,0.,1.,0.],[0.,0.,0.,0.,1.]])
-
-    # Integrate over Q
-    g = np.load(f'/home/velni/Escritorio/TFM/py/metric/data/{mod}/g_{i}{j}_r={r_index}.npy')
-    for Q_index in range(len(Q_vals)):
-        C_s = g[Q_index] - 0.5*M*delta[i-1][j-1]
-        C += C_s
-        C_s = 0
-
-    return C/(2*vol)
-
-def C_ab(i,j,a,b,M,r_index,mod):
-
-    # Initialize values
-    C = 0
-    sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
-
-    # Integrate over Q
-    g = np.load(f'/home/velni/Escritorio/TFM/py/metric/data/{mod}/g_{i}{j}_r={r_index}.npy')
-    for Q_index in range(len(Q_vals)):
-        R = np.zeros((3,3))
-        for ap in range(3):
-            for bp in range(3):
-                R[ap][bp] = 0.5*np.trace(np.dot(sigma[ap],np.dot(Q_vals[Q_index],np.dot(sigma[bp],np.linalg.inv(Q_vals[Q_index])))))
-        C_s = g[Q_index]*np.linalg.inv(R)[a-1][b-1]
-        C += C_s
-        C_s = 0
-
-    return C
-
-#
-
-def D_0(r_index,mod):
-
-    # Initialize value
-    D = 0
-
-    # Integrate over Q
-    for Q_index in range(len(Q_vals)):
-        D_s = pot(r_index,Q_index,mod,0,0)
-        D += D_s
-        D_s = 0
-
-    return D/(2*vol)
-
-def D_ab(r_index,mod):
-
-    # Initialize values
-    D = 0
-    sigma = [np.array([[0j,1.],[1.,0j]]), np.array([[0.,-1j],[1j,0.]]), np.array([[1.,0j],[0j,-1.]])]
-
-    # Integrate over Q
-    for Q_index in range(len(Q_vals)):
-        R = np.zeros((3,3))
-        for ap in range(3):
-            for bp in range(3):
-                R[ap][bp] = 0.5*np.trace(np.dot(sigma[ap],np.dot(Q_vals[Q_index],np.dot(sigma[bp],np.linalg.inv(Q_vals[Q_index])))))
-        D_s = pot(r_index,Q_index,mod,0,0)*np.linalg.inv(R)[a-1][b-1]
-        D += D_s
-        D_s = 0
-
-    return D/2.
-"""
-
+    return D/vol # why not /2?
 
 ### plot
 
@@ -303,32 +204,22 @@ rc('text', usetex=True)
 
 M = 145.85
 L = 106.83
-r_vals = np.arange(0,61,1)
+mass0 = D_0(60,0)
+
+r_vals = np.arange(0,60,1)
 
 X = 1.731 + 0.1*r_vals
-Y = [B_ab(1,1,3,3,1,1,r,0) for r in r_vals]
+Y = [C_ab(2,1,1,1,r,0) for r in r_vals]
 
-plt.plot(X,Y,'k-',label=r'$\mathcal{B}^{11}_{33;11}$')
+np.save('/home/velni/phd/w/tfm/py/fourier/data/0/C_21_11.npy', Y)
+
+plt.title(r'$\mathcal{C}_{21;11}$')
+
+plt.plot(X,Y,'r-')
+
 
 #
 
 plt.xlabel(r'$r$')
-plt.ylabel(r'Coefficient')
 
-plt.legend()
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
